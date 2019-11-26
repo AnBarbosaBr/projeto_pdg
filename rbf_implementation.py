@@ -1,7 +1,9 @@
 # Based on http://www.rueckstiess.net/research/snippets/show/72d2363e implementation
+
 import scipy
 import sklearn.gaussian_process.kernels
-import sklearn.clusters
+import sklearn.cluster
+
 
 def gaussian_kernel(x, center, s):
     return np.exp(-1/2*s**2) * (x-center)**2)
@@ -20,7 +22,7 @@ class RBF():
 
     def fit(self, X, y):
         # 1) Find centers
-        k_means = clusters.Kmeans(n_clusters = self.number_of_centers)
+        k_means = cluster.Kmeans(n_clusters = self.number_of_centers)
         k_means.fit(X)
         k_centers = k_means.cluster_centers_.squeeze()
         

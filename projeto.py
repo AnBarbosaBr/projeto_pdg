@@ -3,7 +3,6 @@
 
 # # Projeto PDG
 
-# In[15]:
 
 
 import pandas as pd;
@@ -179,5 +178,5 @@ for i, (train, test) in enumerate(pastas):
 # In[134]:
 
 
-get_ipython().run_line_magic('pinfo', 'sm.GLM')
+#get_ipython().run_line_magic('pinfo', 'sm.GLM')
 

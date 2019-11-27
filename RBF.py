@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[45]:
-
-
 import pandas as pd
 import numpy as np
 
@@ -11,175 +5,71 @@ import sklearn.cluster
 from sklearn.model_selection import train_test_split
 from sklearn.metrics.pairwise import euclidean_distances
 
-
-# In[25]:
-
-
-seed = 42
-k = 6
-
-
-# In[26]:
-
-
-from sklearn import datasets
-
-
-# In[27]:
-
-
-iris = datasets.load_iris()
-
-
-# In[28]:
-
-
-X = iris.data
-y = iris.target
-
-
-# In[31]:
-
-
-X_treino, X_teste, y_treino, y_teste = train_test_split(X, y, test_size = 50, random_state = seed)
-
-
-# In[36]:
-
-
-kmeans = sklearn.cluster.KMeans(n_clusters = k, random_state = seed)
-
-
-# In[37]:
-
-
-kmeans.fit(X_treino)
-
-
-# In[40]:
-
-
-centros = kmeans.cluster_centers_ 
-# pd.DataFrame(centros)
-
-
-# In[47]:
-
-
-classificados = kmeans.predict(X_treino)
-# classificados
-
-
-# In[76]:
-
-
-distancias_para_cada_centro = euclidean_distances(X_treino, centros)
-distancias_para_cada_centro
-
-
-# In[235]:
-
-
-df_distancias = pd.DataFrame(distancias_para_cada_centro)
-df_distancias['classe'] = classificados
-
-
-# In[236]:
-
-
-distancias_medias = df_distancias.groupby('classe').mean()
-medias_por_grupo = np.diag(medias)
-
-
-# In[237]:
-
-
-desvios = df_distancias.groupby('classe').std()
-desvios_por_grupo = np.diag(desvios)
-
-
-# In[238]:
-
-
-def make_gaussian_kernel(center, sigma):
-    variance = sigma**2
-    gamma = 2*(variance)
-    reshaped_center = np.reshape(center, newshape = (1,-1))
-    def gaussian(x):
-        dist = euclidean_distances(x, reshaped_center, squared=True)
-        normalization_constant = 1/(2*np.pi*variance)
-        return  normalization_constant * np.exp(-(dist/gamma))
-    return gaussian
-
-
-# In[244]:
-
-
-kernels = list()
-for cluster_alvo in range(k):
-    alvos = X_treino[classificados==cluster_alvo]
-    kernel = make_gaussian_kernel(centros[cluster_alvo], desvios_por_grupo[cluster_alvo])
-    kernels.append(kernel)
-
-
-# In[256]:
-
-
-features = list()
-for kernel in kernels:
-    features.append(kernel(X_treino))
-
-
-
-    
-    
-
-
-# In[261]:
-
-
-transformed_input = pd.DataFrame(np.concatenate(features, axis = 1))
-
-
-# In[268]:
-
-
-regression = LogisticRegression()
-
-
-# In[269]:
-
-
-regression.fit(transformed_input, y_treino)
-
-
-# In[275]:
-
-
-predicoes = regression.predict(transformed_input)
-
-
-# In[279]:
-
-
 import sklearn.metrics
 from sklearn.linear_model import LogisticRegression
 
 
-# In[280]:
+class RBFClassifier():
+    def __init__(self, number_of_centers, random_state=42, algorithm = LogisticRegression()):
+        self.number_of_centers = number_of_centers
+        self.centers = None
+        self.centers_std = None
+        self.kernels = None
+        self.random_state = random_state
+        self.algorithm = algorithm
 
+    @staticmethod
+    def make_gaussian_kernel(center, sigma):
+        ''' Creates a Gaussian Kernel function that takes X and calculate the
+        distance from the center with the sigma deviation. 
+        '''
+        variance = sigma**2
+        gamma = 2*(variance)
+        reshaped_center = np.reshape(center, newshape=(1, -1))
 
-sklearn.metrics.multilabel_confusion_matrix(y_true = y_treino, y_pred = predicoes)
+        def gaussian(X):
+            dist = euclidean_distances(X, reshaped_center, squared=True)
+            normalization_constant = 1/(2*np.pi*variance)
+            return normalization_constant * np.exp(-(dist/gamma))
+        return gaussian
 
+    def fit(self, X, y):
+        self._fit_centers(X, y)
+        self._generate_radial_functions()
 
-# In[283]:
+        transformed_X = self._transformed_inputs(X)
+        self._linear_fit(transformed_X, y)
 
+    def predict(self, X):
+        transformed_X = self._transformed_inputs(X)
+        return (self.algorithm.predict(transformed_X))
 
-sklearn.metrics.accuracy_score(y_treino, predicoes)
+    def _fit_centers(self, X, y=None):
+        kmeans = sklearn.cluster.KMeans(n_clusters=self.number_of_centers,
+                                        random_state=self.random_state)
+        kmeans.fit(X)
+        self.centers = kmeans.cluster_centers_
+        groups = kmeans.predict(X)
 
+        center_distances = euclidean_distances(X, self.centers)
+        center_distances_df = pd.DataFrame(center_distances)
+        center_distances_df['classe'] = groups
 
-# In[ ]:
+        # Calculate the std from the center
+        # Note that the center_distances_df has the distance from each center
+        center_distances_std = center_distances_df.groupby('classe').std()
+        self.centers_std = np.diag(center_distances_std)
 
+    def _generate_radial_functions(self):
+        self.kernels = list()
+        for cluster_center, cluster_deviance in zip(self.centers, self.centers_std):
+            kernel = RBFClassifier.make_gaussian_kernel(
+                cluster_center, cluster_deviance)
+            self.kernels.append(kernel)
 
+    def _transformed_inputs(self, X):
+        features = [kernel(X) for kernel in self.kernels]
+        return (np.concatenate(features, axis=1))
 
-
+    def _linear_fit(self, X, y):
+        self.algorithm.fit(X, y)

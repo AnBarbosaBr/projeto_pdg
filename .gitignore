@@ -102,3 +102,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+data/Auto_Insurance_Claims_Sample.csv
+data/auto-insurance-claims-data.zip
+data/car-insurance-claim-data.zip

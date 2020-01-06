@@ -10,7 +10,18 @@ from sklearn.linear_model import LogisticRegression
 
 
 class RBFClassifier():
-    def __init__(self, number_of_centers, random_state=42, algorithm = LogisticRegression()):
+    """TESTE"""
+    def __init__(self, number_of_centers, algorithm, random_state=42):
+        """[summary]
+        
+        Arguments:
+            number_of_centers {integer} -- The number of the centers
+        
+        Keyword Arguments:
+            algorithm {sklearn classification algorithm} -- When None, it will create a LogisticRegression, without balanced class_weights. 
+            random_state {int} -- Random state, to be used with the internal algorithms (default: {42})
+        """        
+
         self.number_of_centers = number_of_centers
         self.centers = None
         self.centers_std = None
@@ -69,7 +80,9 @@ class RBFClassifier():
 
     def _transformed_inputs(self, X):
         features = [kernel(X) for kernel in self.kernels]
-        return (np.concatenate(features, axis=1))
+        features_array = (np.concatenate(features, axis=1))
+        features_array = np.nan_to_num(x = features_array, nan = 0)
+        return features_array
 
     def _linear_fit(self, X, y):
         self.algorithm.fit(X, y)

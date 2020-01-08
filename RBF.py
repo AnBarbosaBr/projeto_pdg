@@ -35,6 +35,8 @@ class RBFClassifier():
         distance from the center with the sigma deviation. 
         '''
         variance = sigma**2
+        # if(variance == 0):
+        #     variance = 1e-10
         gamma = 2*(variance)
         reshaped_center = np.reshape(center, newshape=(1, -1))
 

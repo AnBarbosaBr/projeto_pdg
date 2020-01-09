@@ -9,16 +9,16 @@ import sklearn.metrics
 from sklearn.linear_model import LogisticRegression
 
 
-class RBFClassifier():
+class RBFClassifier(object):
     """TESTE"""
     def __init__(self, number_of_centers, algorithm, random_state=42):
         """[summary]
-        
+                
         Arguments:
             number_of_centers {integer} -- The number of the centers
         
         Keyword Arguments:
-            algorithm {sklearn classification algorithm} -- When None, it will create a LogisticRegression, without balanced class_weights. 
+            algorithm {sklearn classification algorithm}  
             random_state {int} -- Random state, to be used with the internal algorithms (default: {42})
         """        
 
@@ -35,8 +35,8 @@ class RBFClassifier():
         distance from the center with the sigma deviation. 
         '''
         variance = sigma**2
-        # if(variance == 0):
-        #     variance = 1e-10
+        if(variance == 0):
+             variance = 1e-10
         gamma = 2*(variance)
         reshaped_center = np.reshape(center, newshape=(1, -1))
 

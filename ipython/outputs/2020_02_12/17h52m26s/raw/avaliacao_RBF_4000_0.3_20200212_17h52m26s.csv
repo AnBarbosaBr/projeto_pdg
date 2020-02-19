@@ -1,0 +1,11 @@
+,Nome,Tipo,Iteracao,True_Negative,False_Positive,False_Negative,True_Positive
+0,RBF_4000_0.3,Teste,0,1055,5,383,0
+1,RBF_4000_0.3,Teste,1,1049,0,393,0
+2,RBF_4000_0.3,Teste,2,1056,0,385,1
+3,RBF_4000_0.3,Teste,3,1082,0,360,0
+4,RBF_4000_0.3,Teste,4,1037,4,401,0
+5,RBF_4000_0.3,Treino,0,4147,81,1452,88
+6,RBF_4000_0.3,Treino,1,4222,17,1446,84
+7,RBF_4000_0.3,Treino,2,4150,82,1457,80
+8,RBF_4000_0.3,Treino,3,4183,23,1482,81
+9,RBF_4000_0.3,Treino,4,4152,95,1434,88

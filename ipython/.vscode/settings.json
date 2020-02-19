@@ -1,0 +1,6 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.pythonPath": "E:\\program_files\\Anaconda\\envs\\analytics\\python.exe",
+    "python.dataScience.jupyterServerURI": "local"
+}

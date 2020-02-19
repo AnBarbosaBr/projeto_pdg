@@ -1,0 +1,6 @@
+,0
+0,remove_colunas
+1,dinheiro_para_numericas
+2,substitui_missings
+3,transforma_flags_para_1_0
+4,one_hot_encoding

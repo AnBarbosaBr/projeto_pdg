@@ -1,0 +1,7 @@
+﻿Nome;Tipo;MSE
+Arvore;Treino;0
+Arvore;Teste;568755990,5
+GLM;Treino;3010956510
+GLM;Teste;90123546359
+RBF;Teste;261666659,9
+RBF;Treino;258336911,9

@@ -4,6 +4,18 @@ import numpy as np
 import sklearn.preprocessing
 import sklearn.model_selection
 
+# In[]
+
+VARIAVEIS_NUMERICAS =  ["KIDSDRIV","AGE","HOMEKIDS","YOJ","INCOME","HOME_VAL","TRAVTIME", "BLUEBOOK","TIF","OLDCLAIM","MVR_PTS","CAR_AGE"]
+VARIAVEIS_MULTI_CATEGORICAS = ["GENDER", "EDUCATION", "OCCUPATION", "CAR_USE", "CAR_TYPE", "URBANICITY"]
+VARIAVEIS_BINARIAS = ["PARENT1", "MSTATUS", "RED_CAR", "REVOKED"]
+VARIAVEIS_ALVO = ["CLM_FREQ","CLM_AMT","CLAIM_FLAG"]
+
+VARIAVEIS_DINHEIRO = ["INCOME","HOME_VAL","BLUEBOOK","OLDCLAIM", "CLM_AMT"]
+VARIAVEIS_NUMERICAS_COM_MISSING =  ["AGE", "YOJ", "INCOME","HOME_VAL", "BLUEBOOK","OLDCLAIM", "CAR_AGE"]
+VARIAVEIS_CATEGORICAS_COM_MISSING = ["OCCUPATION"]
+
+# In[]
 def pre_000_remove_colunas_desnecessarias(dados):
     data = dados.copy()
 
@@ -13,22 +25,19 @@ def pre_000_remove_colunas_desnecessarias(dados):
 def pre_001_dinheiro_para_numerico(dados):
     data = dados.copy()
     # Converte Dinheiro para numérico        
-    variaveis_dinheiro = ["INCOME","HOME_VAL","BLUEBOOK","OLDCLAIM", "CLM_AMT"]
-    data.loc[ : , variaveis_dinheiro] = data.loc[ : , variaveis_dinheiro].replace('[\$,]', '', regex=True).astype(float)
+    data.loc[ : , VARIAVEIS_DINHEIRO] = data.loc[ : , VARIAVEIS_DINHEIRO].replace('[\$,]', '', regex=True).astype(float)
 
     return data
 
 def pre_002_remove_missing(dados):
     data = dados.copy()
-    variaveis_numericas_missing = ["AGE", "YOJ", "INCOME","HOME_VAL", "BLUEBOOK","OLDCLAIM", "CAR_AGE"]
-    numericas = data.loc[: , variaveis_numericas_missing]
+    numericas = data.loc[: , VARIAVEIS_NUMERICAS_COM_MISSING]
     numericas.fillna(numericas.mean(), inplace = True)
     
-    variaveis_categoricas_missing = ["OCCUPATION"]
-    categoricas = data.loc[: , variaveis_categoricas_missing].fillna("Desconhecido")
+    categoricas = data.loc[: , VARIAVEIS_CATEGORICAS_COM_MISSING].fillna("Desconhecido")
     
-    data.loc[ : , variaveis_numericas_missing] = numericas
-    data.loc[ : , variaveis_categoricas_missing] = categoricas
+    data.loc[ : , VARIAVEIS_NUMERICAS_COM_MISSING] = numericas
+    data.loc[ : , VARIAVEIS_CATEGORICAS_COM_MISSING] = categoricas
     return data
 
 def pre_003_transforma_flags(dados):
@@ -48,12 +57,8 @@ def pre_003_transforma_flags(dados):
     return data
     
 def pre_004_one_hot_encoding(dados):
-
     data = dados.copy()
-
-    
-    variaveis_categoricas = ["GENDER", "EDUCATION", "OCCUPATION", "CAR_USE", "CAR_TYPE", "URBANICITY"]
-    categoricas = data.loc[: , variaveis_categoricas]
+    categoricas = data.loc[: , VARIAVEIS_MULTI_CATEGORICAS]
     encoder = sklearn.preprocessing.OneHotEncoder(
         categories = "auto", 
         drop = "first", 
@@ -67,7 +72,7 @@ def pre_004_one_hot_encoding(dados):
     df_categoricas = pd.DataFrame(categoricas_encodadas)
     df_categoricas.columns = encoder.get_feature_names()
     
-    data.drop(variaveis_categoricas, axis = 1, inplace=True)
+    data.drop(VARIAVEIS_MULTI_CATEGORICAS, axis = 1, inplace=True)
     data = data.join(df_categoricas)
     
     return data
@@ -75,10 +80,13 @@ def pre_004_one_hot_encoding(dados):
 def pre_005_normalizando_dados(dados):
     '''Precisa ser testada'''
     data = dados.copy()
-    variaveis_numericas = ["KIDSDRIV","AGE","HOMEKIDS","YOJ","INCOME","HOME_VAL","TRAVTIME", "BLUEBOOK","TIF","OLDCLAIM","MVR_PTS","CAR_AGE"]
+    reescaladas = sklearn.preprocessing.scale(data.loc[ : , VARIAVEIS_NUMERICAS])
+    data.loc[ : , VARIAVEIS_NUMERICAS] = reescaladas
+    return data
 
-    reescaladas = sklearn.preprocessing.scale(data.loc[ : , variaveis_numericas])
-    data.loc[ : , variaveis_numericas] = reescaladas
+def pre_010_log_dinheiro(dados):
+    data = dados.copy()
+    data.loc[ : , VARIAVEIS_DINHEIRO] = np.log10(data.loc[ : , VARIAVEIS_DINHEIRO]+0.001)
     return data
 
 def pre_process(data):
@@ -97,3 +105,33 @@ def pre_process(data):
     etapas.append("normalizacao_com_desvios_padrao")
     return data_pre, etapas
     
+
+def pre_simples(data):
+    etapas = list()
+    data_pre = pre_000_remove_colunas_desnecessarias(data)
+    etapas.append("remove_colunas")
+    data_pre = pre_001_dinheiro_para_numerico(data_pre)
+    etapas.append("dinheiro_para_numericas")
+    data_pre = pre_002_remove_missing(data_pre)
+    etapas.append("substitui_missings")
+    data_pre = pre_003_transforma_flags(data_pre)
+    etapas.append("transforma_flags_para_1_0")
+    data_pre = pre_004_one_hot_encoding(data_pre)
+    etapas.append("one_hot_encoding")
+    return data_pre, etapas
+        
+def pre_normalizado(data):
+    data_pre, etapas = pre_simples(data)    
+    etapas.append("Normalização Com Desvios Padrão")
+    data_pre = pre_005_normalizando_dados(data_pre)
+    return data_pre, etapas
+
+def pre_logDinheiro(data):
+    data_pre, etapas = pre_simples(data)    
+    etapas.append("Log Dinheiro")
+    data_pre = pre_010_log_dinheiro(data_pre)
+    return data_pre, etapas
+
+def pre_pca(data):
+    '''TODO'''
+    raise NotImplementedError

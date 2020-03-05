@@ -1,6 +1,6 @@
 import sklearn.tree
 import statsmodels.api as sm
-import funcoes_auxiliares
+from funcoes_auxiliares import funcoes_auxiliares_classificacao
 import RBF
 
 
@@ -28,7 +28,7 @@ def analisa_arvore(dados, folds, treshold = None):
         treino_previsto = model.predict(X_treino)
         teste_previsto = model.predict(X_teste)
 
-        avaliacao = funcoes_auxiliares.avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto)
+        avaliacao = funcoes_auxiliares_classificacao.avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto)
         avaliacoes.append(avaliacao)
     return avaliacoes
 
@@ -61,7 +61,7 @@ def analisa_glm(dados, folds, treshold):
         treino_previsto = probabilidade_treino >= treshold
         teste_previsto = probabilidade_teste >= treshold
 
-        avaliacao = funcoes_auxiliares.avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto)
+        avaliacao = funcoes_auxiliares_classificacao.avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto)
         avaliacoes.append(avaliacao)
     return avaliacoes
 
@@ -90,7 +90,7 @@ def analisa_rbf(dados, folds, treshold, number_of_centers):
         treino_previsto = probabilidade_treino >= treshold
         teste_previsto = probabilidade_teste >= treshold
 
-        avaliacao = funcoes_auxiliares.avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto)
+        avaliacao = funcoes_auxiliares_classificacao.avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto)
         avaliacoes.append(avaliacao)
     return avaliacoes
 

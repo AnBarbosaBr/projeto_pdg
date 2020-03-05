@@ -1,0 +1,7 @@
+,Nome,Tipo,True_Negative,False_Positive,False_Negative,True_Positive
+0,Arvore,Teste,4177,1111,1079,844
+1,Arvore,Treino,47592,0,0,17307
+2,GLM,Teste,4869,419,1147,776
+3,GLM,Treino,43931,3661,10102,7205
+4,RBF,Teste,1034,4254,196,1727
+5,RBF,Treino,10403,37189,1870,15437

@@ -1,6 +1,6 @@
 import sklearn.tree
 import statsmodels.api as sm
-import funcoes_auxiliares.funcoes_auxiliares_regressao as auxiliares
+import funcoes_auxiliares.funcoes_auxiliares_regressao_valor as auxiliares
 import RBF
 
 '''Funções exportadas

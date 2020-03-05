@@ -33,6 +33,18 @@ familia = FAMILIA
 
 
 NUM_CENTERS = 40
+
+
+FUNCOES_DE_PREPROCESSAMENTO = {"Simples": data_pipeline.pre_simples,
+                                "Normalizado": data_pipeline.pre_normalizado,
+                                "LogDinheiro": data_pipeline.pre_logDinheiro}
+
+TAREFA = "REGRESSAO_AMT"
+
+# In[]: Pré Análise
+data = pd.read_csv("../data/car_insurance_claim.csv")
+
+for nome_preprocessamento, funcao_de_preprocessamento in FUNCOES_DE_PREPROCESSAMENTO.items():
 data = pd.read_csv("../data/car_insurance_claim.csv")
 
 ###############

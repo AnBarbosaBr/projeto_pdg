@@ -28,7 +28,9 @@ SEED = 42
 TRAIN_SIZE = 0.7
 N_SPLITS = 10
 
+TAMANHO_ARVORE = None
 LINK = sm.genmod.families.links.log
+#FAMILIA = sm.families.Tweedie(var_power = 1.0)
 FAMILIA = sm.families.Tweedie(var_power = 1.0)
 familia = FAMILIA
 
@@ -42,12 +44,11 @@ FUNCOES_DE_PREPROCESSAMENTO = {"Simples": data_pipeline.pre_simples,
 
 TAREFA = "REGRESSAO_FREQ"
 
-# In[]: Pré Análise
+# In[]: Análise
 data = pd.read_csv("../data/car_insurance_claim.csv")
+train_data, test_data = sklearn.model_selection.train_test_split(data_pre, train_size = TRAIN_SIZE, random_state = SEED)
 
 for nome_preprocessamento, funcao_de_preprocessamento in FUNCOES_DE_PREPROCESSAMENTO.items():
-
-data = pd.read_csv("../data/car_insurance_claim.csv")
 
     ###############
     # # Pré Tratamento dos Dados
@@ -56,13 +57,11 @@ data = pd.read_csv("../data/car_insurance_claim.csv")
     ################
     # # Separa Treino e Teste
     ################
-    train_data, test_data = sklearn.model_selection.train_test_split(data_pre, train_size = TRAIN_SIZE, random_state = SEED)
 
     ############
     # # Primeiras analises - Usando apenas o Treino e K-Fold
     ############
     kfold = sklearn.model_selection.KFold(n_splits=N_SPLITS, shuffle = True, random_state = SEED)
-
 
     # In[]
     # Análise Arvore
@@ -73,7 +72,8 @@ data = pd.read_csv("../data/car_insurance_claim.csv")
     pastas = kfold.split(train_data)
     matrizes_arvore = analise_regressao_freq.analisa_arvore(
                                                 dados = train_data, 
-                                                folds = pastas)
+                                                folds = pastas,
+                                                depth = TAMANHO_ARVORE)
 
     # print(matrizes_arvore[0].teste)
 

@@ -1,6 +1,6 @@
 import sklearn.tree
 import statsmodels.api as sm
-import funcoes_auxiliares.funcoes_auxiliares_regressao as auxiliares
+import funcoes_auxiliares.funcoes_auxiliares_regressao_freq as auxiliares
 import RBF
 
 '''Funções exportadas
@@ -13,12 +13,12 @@ TARGETS = ["CLM_FREQ","CLM_AMT","CLAIM_FLAG"]
 THIS_TARGET = ["CLM_FREQ"]
 
 
-def analisa_arvore(dados, folds):
+def analisa_arvore(dados, folds, depth):
     X_data = dados.drop(TARGETS, axis = 1)
     y_data = dados.loc[ : , THIS_TARGET]
 
     avaliacoes = list()
-    for i, (train_index, test_index) in enumerate(folds):
+    for i, (train_index, test_index) in enumerate(folds):  
         print(f"Árvore, iteração {i}")
         X_treino = X_data.iloc[train_index, : ]
         y_treino = y_data.iloc[train_index]
@@ -26,11 +26,11 @@ def analisa_arvore(dados, folds):
         X_teste = X_data.iloc[test_index, : ]
         y_teste = y_data.iloc[test_index]
 
-        model = sklearn.tree.DecisionTreeRegressor()
+        model = sklearn.tree.DecisionTreeRegressor(max_depth = depth)
         model.fit(X_treino, y_treino)
 
         treino_previsto = model.predict(X_treino)
-        teste_previsto = model.predict(X_teste)
+        teste_previsto = model.predict(X_teste)   
 
         avaliacao = auxiliares.avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto)
         avaliacoes.append(avaliacao)
@@ -88,6 +88,8 @@ def analisa_rbf(dados, folds, number_of_centers):
         treino_previsto = model.predict(X_treino)
         teste_previsto = model.predict(X_teste)
 
+        treino_previsto[treino_previsto < 0] = 0
+        teste_previsto[teste_previsto < 0 ] = 0
         avaliacao = auxiliares.avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto)
         avaliacoes.append(avaliacao)
     return avaliacoes

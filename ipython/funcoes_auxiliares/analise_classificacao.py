@@ -9,7 +9,7 @@ TARGETS = ["CLM_FREQ","CLM_AMT","CLAIM_FLAG"]
 THIS_TARGET = ["CLAIM_FLAG"]
 
 
-def analisa_arvore(dados, folds, treshold = None):
+def analisa_arvore(dados, folds, depth):
     X_data = dados.drop(TARGETS, axis = 1)
     y_data = dados.loc[ : , THIS_TARGET]
 
@@ -22,7 +22,7 @@ def analisa_arvore(dados, folds, treshold = None):
         X_teste = X_data.iloc[test_index, : ]
         y_teste = y_data.iloc[test_index]
 
-        model = sklearn.tree.DecisionTreeClassifier()
+        model = sklearn.tree.DecisionTreeClassifier(max_depth = depth)
         model.fit(X_treino, y_treino)
 
         treino_previsto = model.predict(X_treino)

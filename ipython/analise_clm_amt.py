@@ -34,7 +34,7 @@ N_SPLITS = 10
 LINK = sm.genmod.families.links.log
 FAMILIA = sm.families.Tweedie(var_power = 1.0)
 familia = FAMILIA
-
+TAMANHO_ARVORE = None
 
 NUM_CENTERS = 40
 
@@ -44,6 +44,15 @@ FUNCOES_DE_PREPROCESSAMENTO = {"Simples": data_pipeline.pre_simples,
                                 "LogDinheiro": data_pipeline.pre_logDinheiro}
 
 TAREFA = "REGRESSAO_AMT"
+
+resumo_parametros = {
+    "SEED": str(SEED), "TRAIN_SIZE": str(TRAIN_SIZE), "N_SPLITS": str(N_SPLITS),
+    "GLM_LINK": str(LINK),
+    "GLM_FAMILIA": str(FAMILIA),
+    "TREE_DEPTH": str(TAMANHO_ARVORE),
+    "RBF_NUM_CENTERS": str(NUM_CENTERS),
+    "FUNC_PREPROCESSAMENTOS": str(FUNCOES_DE_PREPROCESSAMENTO.keys())
+}
 
 # In[]: Pré Análise
 data = pd.read_csv("../data/car_insurance_claim.csv")

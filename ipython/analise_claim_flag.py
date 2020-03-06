@@ -25,6 +25,8 @@ N_SPLITS = 10
 GLM_TRESHOLD = 0.5
 RBF_TRESHOLD = 0.27
 NUM_CENTERS = 40
+
+TAMANHO_ARVORE = None
 FUNCOES_DE_PREPROCESSAMENTO = {"Simples": data_pipeline.pre_simples,
                                 "Normalizado": data_pipeline.pre_normalizado,
                                 "LogDinheiro": data_pipeline.pre_logDinheiro}

@@ -31,7 +31,7 @@ FUNCOES_DE_PREPROCESSAMENTO = {"Simples": data_pipeline.pre_simples,
                                 "Normalizado": data_pipeline.pre_normalizado,
                                 "LogDinheiro": data_pipeline.pre_logDinheiro}
 
-TAREFA = "CLASSIFICACAO"
+TAREFA = "CLASSIFICACAO_FLAG"
 CRITERIO_MSE = "MSE"
 CRITERIO_POISSON_DEVIACNE = "PoissonDeviance"
 

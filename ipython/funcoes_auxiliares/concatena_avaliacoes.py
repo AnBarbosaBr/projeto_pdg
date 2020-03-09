@@ -8,7 +8,7 @@ from funcoes_auxiliares.funcoes_concatenacao import *
 GRID_SEARH = "gridsearch"
 MODELO = "modelos"
 REGRESSAO = "regressao"
-CLASSIFICACAO = "classificacao"
+CLASSIFICACAO_FLAG = "classificacao"
 
 GLM = "glm"
 RBF = "rbf"
@@ -31,7 +31,7 @@ if(full_df.shape[0] == 0):
     raise Exception(f"Não foi possível encontrar nenhum arquivo para a hora desejada: {data_hora_desejada}.")
 resumo = agrupa_modelos(full_df)
 
-if tarefa == CLASSIFICACAO:
+if tarefa == CLASSIFICACAO_FLAG:
     resumo = enriquece_matriz_de_confusao(resumo)
 
 try:

@@ -29,7 +29,7 @@ FUNCOES_DE_PREPROCESSAMENTO = {"Simples": data_pipeline.pre_simples,
                                 "Normalizado": data_pipeline.pre_normalizado,
                                 "LogDinheiro": data_pipeline.pre_logDinheiro}
 
-TAREFA = {"CLASSIFICACAO": "CLAIM_FLAG", 
+TAREFA = {"CLASSIFICACAO_FLAG": "CLAIM_FLAG", 
           "REGRESSAO_AMT": "CLM_AMT",
           "REGRESSAO_FREQ": "CLM_FREQ"}
 

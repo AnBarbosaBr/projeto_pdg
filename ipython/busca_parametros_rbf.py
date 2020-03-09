@@ -21,7 +21,7 @@ import statsmodels.api as sm
 from funcoes_auxiliares.report_maker import ReportFlag, ReportValor, ReportFrequencia
 
 # In[]: Preparação
-OUTPUT_PATH = "outputs/2020_03_08/BuscaParametros"
+OUTPUT_PATH = "outputs/2020_03_08/BuscaParametros/RBF"
 SEED = 42
 TRAIN_SIZE = 0.7
 N_SPLITS = 10
@@ -29,7 +29,7 @@ FUNCOES_DE_PREPROCESSAMENTO = {"Simples": data_pipeline.pre_simples,
                                 "Normalizado": data_pipeline.pre_normalizado,
                                 "LogDinheiro": data_pipeline.pre_logDinheiro}
 
-TAREFA = {"CLASSIFICACAO": "CLAIM_FLAG", 
+TAREFA = {"CLASSIFICACAO_FLAG": "CLAIM_FLAG", 
           "REGRESSAO_AMT": "CLM_AMT",
           "REGRESSAO_FREQ": "CLM_FREQ"}
 

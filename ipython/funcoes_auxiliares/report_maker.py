@@ -101,7 +101,7 @@ class ReportFlag(ReportGenerator):
                             preprocessamentos, 
                             parametros, 
                             nome_preprocessamento)
-        self.tipo_report = "CLASSIFICACAO"
+        self.tipo_report = "CLASSIFICACAO_FLAG"
 
     def concatena_avaliacoes(self):
         columns_details = ["Nome","Tipo","Iteracao", "True_Positive","True_Negative","False_Positive","False_Negative"]
@@ -159,7 +159,7 @@ class ReportFrequencia(ReportGenerator):
                         preprocessamentos, 
                         parametros, 
                         nome_preprocessamento)
-        self.tipo_report = "REGRECAO_FREQ"
+        self.tipo_report = "REGRESSAO_FREQ"
         
     def concatena_avaliacoes(self):
         columns_details = ["Nome","Tipo","Iteracao", "MSE"]

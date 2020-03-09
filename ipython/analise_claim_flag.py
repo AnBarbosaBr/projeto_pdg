@@ -40,7 +40,7 @@ parametros = {"Tree": {"MaxDepth": None},
 
 
 # In[]: Pré Análise
-data = pd.read_csv("../data/car_insurance_clain_train.csv")
+raw_data = pd.read_csv("../data/car_insurance_clain_train.csv", index_col=0)
 
 for nome_preprocessamento, funcao_de_preprocessamento in FUNCOES_DE_PREPROCESSAMENTO.items():
     
@@ -49,7 +49,8 @@ for nome_preprocessamento, funcao_de_preprocessamento in FUNCOES_DE_PREPROCESSAM
     ###############
     # # Pré Tratamento dos Dados
     ###############
-    train_data, tratamentos = funcao_de_preprocessamento(data)
+    train_data, tratamentos = funcao_de_preprocessamento(raw_data)
+
     
     ############
     # # Primeiras analises - Usando apenas o Treino e K-Fold

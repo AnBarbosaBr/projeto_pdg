@@ -43,15 +43,17 @@ parametros = {"Tree": {"MaxDepth": None},
               "RBFN": {"NCentroides": 40,
                        "Limiar": "Irrelevante"}}
 
-# In[]: Análise
-data = pd.read_csv("../data/car_insurance_clain_train.csv")
+# In[]: Pré Análise
+raw_data = pd.read_csv("../data/car_insurance_clain_train.csv", index_col=0)
 
 for nome_preprocessamento, funcao_de_preprocessamento in FUNCOES_DE_PREPROCESSAMENTO.items():
-
+    print(f"Iniciando análise de frequencia. Tratamento Atributos: {nome_preprocessamento}")
+    
     ###############
     # # Pré Tratamento dos Dados
     ###############
-    train_data, tratamentos = data_pipeline.pre_process(data)
+    train_data, tratamentos = funcao_de_preprocessamento(raw_data)
+
     kfold = sklearn.model_selection.KFold(n_splits=N_SPLITS, shuffle = True, random_state = SEED)
     
     ############

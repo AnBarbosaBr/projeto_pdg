@@ -9,7 +9,12 @@ TARGETS = ["CLM_FREQ","CLM_AMT","CLAIM_FLAG"]
 THIS_TARGET = ["CLAIM_FLAG"]
 
 
-def analisa_arvore(dados, folds, depth):
+def analisa_arvore(dados, folds, parametros):
+    print("Analisa Árvore")
+    print("Parâmetros: "+str(parametros["Tree"]))
+    
+    depth = parametros["Tree"]["MaxDepth"]
+    
     X_data = dados.drop(TARGETS, axis = 1)
     y_data = dados.loc[ : , THIS_TARGET]
 
@@ -33,7 +38,20 @@ def analisa_arvore(dados, folds, depth):
     return avaliacoes
 
 
-def analisa_glm(dados, folds, treshold):
+def analisa_glm(dados, folds, parametros):
+    print("Analisa GLM")
+    print("Parâmetros: "+str(parametros["GLM"]))
+
+    familia = parametros["GLM"]["Família"]
+    if(familia == sm.families.Tweedie):
+        var_power = parametros["GLM"]["Var Power"]
+        familia = sm.families.Tweedie(var_power = var_power)
+    else:
+        familia = familia()
+
+    treshold = parametros["GLM"]["Limiar"]
+
+
     X_data = dados.drop(TARGETS, axis = 1)
     y_data = dados.loc[ : , THIS_TARGET]
 
@@ -48,7 +66,7 @@ def analisa_glm(dados, folds, treshold):
 
         exog_data = X_treino
         endog_data = y_treino
-        familia = sm.families.Binomial()
+
         model = sm.GLM(exog = exog_data,
                        endog = endog_data,
                        family = familia)
@@ -66,7 +84,13 @@ def analisa_glm(dados, folds, treshold):
     return avaliacoes
 
 
-def analisa_rbf(dados, folds, treshold, number_of_centers):
+def analisa_rbf(dados, folds, parametros):
+    print("Analisa RBFN")
+    print("Parâmetros: "+str(parametros["RBFN"]))
+    
+    treshold = parametros["RBFN"]["Limiar"]
+    number_of_centers = parametros["RBFN"]["NCentroides"]
+    
     X_data = dados.drop(TARGETS, axis = 1)
     y_data = dados.loc[ : , THIS_TARGET]
 
@@ -79,8 +103,7 @@ def analisa_rbf(dados, folds, treshold, number_of_centers):
         X_teste = X_data.iloc[test_index, : ]
         y_teste = y_data.iloc[test_index]
 
-        model = RBF.RBFClassifier(number_of_centers = number_of_centers, 
-                                  algorithm = sklearn.linear_model.LinearRegression(), 
+        model = RBF.RBFNetwork(number_of_centers = number_of_centers, 
                                   random_state=42)
         model.fit(X_treino, y_treino)
 

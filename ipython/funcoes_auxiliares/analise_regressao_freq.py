@@ -13,7 +13,12 @@ TARGETS = ["CLM_FREQ","CLM_AMT","CLAIM_FLAG"]
 THIS_TARGET = ["CLM_FREQ"]
 
 
-def analisa_arvore(dados, folds, depth):
+def analisa_arvore(dados, folds, parametros):
+    print("Analisa Árvore")
+    print("Parâmetros: "+str(parametros["Tree"]))
+   
+    depth = parametros["Tree"]["MaxDepth"]
+    
     X_data = dados.drop(TARGETS, axis = 1)
     y_data = dados.loc[ : , THIS_TARGET]
 
@@ -37,7 +42,17 @@ def analisa_arvore(dados, folds, depth):
     return avaliacoes
 
 
-def analisa_glm(dados, folds, familia):
+def analisa_glm(dados, folds, parametros):
+    print("Analisa GLM")
+    print("Parâmetros: "+str(parametros["GLM"]))
+
+    familia = parametros["GLM"]["Família"]
+    if(familia == sm.families.Tweedie):
+        var_power = parametros["GLM"]["Var Power"]
+        familia = sm.families.Tweedie(var_power = var_power)
+    else:
+        familia = familia()
+
     X_data = dados.drop(TARGETS, axis = 1)
     y_data = dados.loc[ : , THIS_TARGET]
 
@@ -67,7 +82,12 @@ def analisa_glm(dados, folds, familia):
     return avaliacoes
 
 
-def analisa_rbf(dados, folds, number_of_centers):
+def analisa_rbf(dados, folds, parametros):
+    print("Analisa RBFN")
+    print("Parâmetros: "+str(parametros["RBFN"]))
+
+
+    number_of_centers = parametros["RBFN"]["NCentroides"]
     X_data = dados.drop(TARGETS, axis = 1)
     y_data = dados.loc[ : , THIS_TARGET]
 
@@ -80,8 +100,7 @@ def analisa_rbf(dados, folds, number_of_centers):
         X_teste = X_data.iloc[test_index, : ]
         y_teste = y_data.iloc[test_index]
 
-        model = RBF.RBFRegressor(number_of_centers = number_of_centers, 
-                                  algorithm = sklearn.linear_model.LinearRegression(), 
+        model = RBF.RBFNetwork(number_of_centers = number_of_centers, 
                                   random_state=42)
         model.fit(X_treino, y_treino)
 

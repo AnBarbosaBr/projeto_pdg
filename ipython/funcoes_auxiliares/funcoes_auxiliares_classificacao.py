@@ -1,29 +1,6 @@
 import pandas as pd
 import sklearn.metrics
 from collections import namedtuple
-def score_results(y_real, y_predito, label):
-    matriz_de_confusao = sklearn.metrics.confusion_matrix(y_true = y_real, y_pred = y_predito)
-    tn, fp, fn, tp = matriz_de_confusao.ravel()
-    
-    print(f"--- {label} ---")
-    print("Matrix de Confusão")
-    print(matriz_de_confusao)
-    print("Balanced Accuracy: ", end=" ")
-    print(f"{100*sklearn.metrics.balanced_accuracy_score(y_true = y_real, y_pred = y_predito):.2f}%")
-    print(f"Falsos Positivos: {fp}, Falsos Negativos: {fn}\n"+
-            f"Verdadeiros Positivos: {tp}, Verdadeiros Negativos: {tn}")
-    print(f"Precisao (tp/(tp+fp)): {100*tp/(tp+fp) :.2f}%")
-    print(f"Recall (tp/(tp+fn)): {100*tp/(tp+fn) :.2f}%")
-    
-    print("-"*50)
-
-def avalia_modelo_regressao(y_treino, y_teste, treino_previsto, teste_previsto):
-        squared_error_treino = sklearn.metrics.mean_squared_error(y_true = y_treino, y_pred = treino_previsto)
-        squared_error_teste = sklearn.metrics.mean_squared_error(y_true = y_teste, y_pred = teste_previsto)
-        ResultadoRegressao = namedtuple("ResultadoRegressao", ["treino","teste"])
-        return ResultadoRegressao(
-                        treino = squared_error_treino,
-                        teste = squared_error_teste)
 
 
 def avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto):

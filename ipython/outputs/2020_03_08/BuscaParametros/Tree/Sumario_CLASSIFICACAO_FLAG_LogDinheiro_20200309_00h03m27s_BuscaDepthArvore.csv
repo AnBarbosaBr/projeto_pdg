@@ -1,0 +1,3 @@
+﻿Nome,Tipo,True_Positive,True_Negative,False_Positive,False_Negative
+8,Teste,1758,14252,1612,4011
+8,Treino,23473,135355,7421,28448

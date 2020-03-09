@@ -1,0 +1,3 @@
+﻿Nome,Tipo,True_Positive,True_Negative,False_Positive,False_Negative
+3,Teste,648,15358,506,5121
+3,Treino,6480,138513,4263,45441

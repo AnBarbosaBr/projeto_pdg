@@ -71,11 +71,10 @@ def pre_004_one_hot_encoding(dados):
     categoricas_encodadas = encoder.transform(categoricas)
     df_categoricas = pd.DataFrame(categoricas_encodadas)
     df_categoricas.columns = encoder.get_feature_names()
+    df_categoricas.index = categoricas.index
     
     data.drop(VARIAVEIS_MULTI_CATEGORICAS, axis = 1, inplace=True)
-    data = data.join(df_categoricas)
-    
-    return data
+    return data.join(df_categoricas)
 
 def pre_005_normalizando_dados(dados):
     '''Precisa ser testada'''

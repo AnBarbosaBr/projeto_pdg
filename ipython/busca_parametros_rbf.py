@@ -2,7 +2,8 @@
 # coding: utf-8
 
 # In[]
-
+import 
+os.chdir("E:/andre/documentos/ufabc/pdg/projeto_pdg/ipython")
 #################
 # # Projeto PDG
 #################

@@ -36,13 +36,16 @@ TAREFA = {"CLASSIFICACAO": "CLAIM_FLAG",
 TARGETS = ["CLM_FREQ","CLM_AMT","CLAIM_FLAG"]
 
 
-parametros = {"GLM": {"Var Power": [1.0, 1.2, 1.5, 1.8, 2.0],
+parametros = {"GLM": {
+                        "Var Power": [1.0, 1.2, 1.5, 1.8, 2.0],
                       "Limiar": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]}}
 
 # In[]: Pré Análise
 raw_data = pd.read_csv("../data/car_insurance_clain_train.csv", index_col=0)
 
 for var_power in parametros["GLM"]["Var Power"]:
+    familia = sm.families.Tweedie(var_power = var_power)
+
     resultados_classificacao = {limiar: [] for limiar in parametros["GLM"]["Limiar"]}
     resultados_valor = list()
     resultados_frequencia = list()
@@ -63,29 +66,6 @@ for var_power in parametros["GLM"]["Var Power"]:
 
             X_teste = X_data.iloc[test_index, : ]
             y_testeDF = y_data.iloc[test_index, : ]
-
-            print("Classificacao")
-            y_teste = y_testeDF.loc[ : , "CLAIM_FLAG"]
-            y_treino = y_treinoDF.loc[ : , "CLAIM_FLAG"]
-
-            familia = sm.families.Tweedie(var_power = var_power)
-            
-            model = sm.GLM(exog = X_treino,
-                           endog = y_treino,
-                           family = familia)
-            
-            glm = model.fit()
-
-            probabilidade_treino = glm.predict(X_treino)
-            probabilidade_teste = glm.predict(X_teste)
-
-            for treshold in parametros["GLM"]["Limiar"]:
-                treino_previsto = probabilidade_treino >= treshold
-                teste_previsto = probabilidade_teste >= treshold
-
-                avaliacao = funcoes_auxiliares_classificacao.avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto)
-                resultados_classificacao[treshold].append(avaliacao)
-            
 
             print("Valor")
             y_teste = y_testeDF.loc[ : , "CLM_AMT"]
@@ -121,13 +101,7 @@ for var_power in parametros["GLM"]["Var Power"]:
             resultados_frequencia.append(avaliacao)
 
  
-            
-        ReportFlag(resultados_classificacao,
-                                            preprocessamentos = tratamentos,
-                                            parametros = {"GLM": {"VarPower": var_power, "Limiar": parametros["GLM"]["Limiar"]}},
-                                            nome_preprocessamento = nome_preprocessamento,
-                                            ).generate_report(output_path = OUTPUT_PATH, identificador = "BuscaParamGLM")
-        
+
         ReportValor({var_power: resultados_valor},
                                         preprocessamentos = tratamentos,
                                         parametros = {"GLM": {"VarPower": var_power}},
@@ -142,3 +116,35 @@ for var_power in parametros["GLM"]["Var Power"]:
 
 
 # %%
+print("GLM: Avalia CLASSIFICAÇÃO")
+print("Deve ser feito em separado, pois a função Tweedie está dando erro ao tratar esses casos.")
+print("Testar links diferentes: identidade, log, logit, probit...")
+print("Site do statsmodels fora do ar...")
+y_teste = y_testeDF.loc[ : , "CLAIM_FLAG"]
+y_treino = y_treinoDF.loc[ : , "CLAIM_FLAG"]
+
+familia = sm.families.Binomial()
+
+model = sm.GLM(exog = X_treino,
+                endog = y_treino,
+                family = familia)
+
+glm = model.fit()
+
+probabilidade_treino = glm.predict(X_treino)
+probabilidade_teste = glm.predict(X_teste)
+resultados_classificacao = list()
+for treshold in parametros["GLM"]["Limiar"]:
+    treino_previsto = probabilidade_treino >= treshold
+    teste_previsto = probabilidade_teste >= treshold
+
+    avaliacao = funcoes_auxiliares_classificacao.avalia_modelo(y_treino, y_teste, treino_previsto, teste_previsto)
+    resultados_classificacao.append(avaliacao)
+
+            
+    ReportFlag({treshold: resultados_classificacao},
+                                            preprocessamentos = tratamentos,
+                                            parametros = {"GLM": {"VarPower": var_power, "Limiar": parametros["GLM"]["Limiar"]}},
+                                            nome_preprocessamento = nome_preprocessamento,
+                                            ).generate_report(output_path = OUTPUT_PATH, identificador = "BuscaParamGLM")
+        

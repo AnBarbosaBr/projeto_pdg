@@ -1,0 +1,11 @@
+ID,KIDSDRIV,BIRTH,AGE,HOMEKIDS,YOJ,INCOME,PARENT1,HOME_VAL,MSTATUS,GENDER,EDUCATION,OCCUPATION,TRAVTIME,CAR_USE,BLUEBOOK,TIF,CAR_TYPE,RED_CAR,OLDCLAIM,CLM_FREQ,REVOKED,MVR_PTS,CLM_AMT,CAR_AGE,CLAIM_FLAG,URBANICITY
+302807788,0,21JUN40,59.0,0,9.0,"$81,254",No,,Yes,z_F,Masters,Manager,14,Private,"$20,630",3,z_SUV,no,"$4,562",1,No,0,"$4,970",12.0,1,Highly Urban/ Urban
+665870167,0,15OCT38,61.0,0,6.0,"$46,826",No,"$178,836",z_No,z_F,Masters,Lawyer,19,Private,"$23,880",10,z_SUV,no,"$1,776",3,No,4,$0,16.0,0,Highly Urban/ Urban
+292409322,0,14OCT49,50.0,0,9.0,"$154,602",No,$0,z_No,M,Masters,Lawyer,36,Private,"$6,500",7,Pickup,yes,$0,0,No,1,$0,11.0,0,Highly Urban/ Urban
+870022121,0,20OCT45,54.0,0,11.0,"$53,908",No,"$187,804",Yes,M,z_High School,Clerical,46,Private,"$19,970",11,Van,yes,$0,0,No,0,$0,1.0,0,z_Highly Rural/ Rural
+436906531,0,10FEB56,43.0,0,10.0,"$68,350",No,"$204,797",Yes,z_F,Masters,Lawyer,36,Private,"$22,570",6,z_SUV,no,$0,0,No,0,$0,13.0,0,z_Highly Rural/ Rural
+204413317,0,17FEB38,61.0,0,11.0,"$78,143",No,$0,z_No,M,PhD,Manager,20,Private,"$21,670",1,Van,yes,$0,0,No,0,$0,19.0,0,Highly Urban/ Urban
+638602003,2,20JUN60,39.0,2,,"$64,990",No,"$197,575",Yes,z_F,z_High School,Professional,5,Commercial,"$17,510",10,Pickup,no,$0,0,No,0,$0,7.0,0,Highly Urban/ Urban
+241052590,0,13FEB56,43.0,0,7.0,"$119,579",No,"$331,156",z_No,z_F,Bachelors,z_Blue Collar,27,Commercial,"$17,760",4,z_SUV,no,"$10,137",1,No,5,$0,12.0,0,Highly Urban/ Urban
+413295070,0,14JUL42,57.0,0,14.0,,No,"$403,628",Yes,M,Bachelors,Manager,5,Commercial,"$31,550",1,Panel Truck,yes,"$4,355",1,No,0,$0,8.0,0,Highly Urban/ Urban
+331457673,0,15APR59,40.0,1,10.0,"$21,628",Yes,"$60,877",z_No,z_F,<High School,Home Maker,44,Private,"$12,260",10,Minivan,no,$0,0,No,0,$0,,0,Highly Urban/ Urban

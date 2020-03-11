@@ -16,7 +16,7 @@ class DataPipeline(object):
 
     def __init__(self, datapath):
         self.datapath = datapath
-        self.out_data = None
+        self.data_out = None
         self.last_procedure = "None"
         self.procedures = list()
         self.raw_data = None
@@ -36,24 +36,24 @@ class DataPipeline(object):
         self.clean_procedures()
         self.record_procedure("Leitura da Base", f"Leitura do Arquivo: {raw_path}")
         self.raw_data = pd.read_csv(self.datapath)
-        self.out_data = self.raw_data
+        self.data_out = self.raw_data
         return self.raw_data
 
     def step00_remove_columns(self):
         self.record_procedure(f"Remove Colunas", "Removendo Colunas : {self.VARIAVEIS_DESNECESSARIAS}")
-        self.out_data = self.out_data.drop(self.VARIAVEIS_DESNECESSARIAS, axis = 1)
+        self.data_out = self.data_out.drop(self.VARIAVEIS_DESNECESSARIAS, axis = 1)
 
     def step01_money_to_number(self):
         self.record_procedure("Transformando Dinheiro em Número", f"Removendo '$' das variáveis monetárias e convertendo em numéricas: {self.VARIAVEIS_DINHEIRO}")
-        data = self.out_data.copy()
+        data = self.data_out.copy()
         # Converte Dinheiro para numérico        
         data.loc[ : , self.VARIAVEIS_DINHEIRO] = data.loc[ : , self.VARIAVEIS_DINHEIRO].replace('[\$,]', '', regex=True).astype(float)
-        self.out_data = data
+        self.data_out = data
 
     def step02_remove_missing(self):
         self.record_procedure(f"Substituindo Missing - Categóricas", f"Substituindo valores missing colunas categóricas. Estratégia: Adicionada categoria 'Desconhecido': {self.VARIAVEIS_CATEGORICAS_COM_MISSING}")
         self.record_procedure(f"Substituindo Missing - Numéricas", f"Substituindo valores missing colunas numéricas. Estratégia: Média: {self.VARIAVEIS_NUMERICAS_COM_MISSING}")
-        data = self.out_data.copy()
+        data = self.data_out.copy()
         numericas = data.loc[: , self.VARIAVEIS_NUMERICAS_COM_MISSING]
         numericas.fillna(numericas.mean(), inplace = True)
         
@@ -61,11 +61,11 @@ class DataPipeline(object):
         
         data.loc[ : , self.VARIAVEIS_NUMERICAS_COM_MISSING] = numericas
         data.loc[ : , self.VARIAVEIS_CATEGORICAS_COM_MISSING] = categoricas
-        self.out_data = data
+        self.data_out = data
 
     def step03_flags_to_number(self):
         self.record_procedure(f"Homogenizando flags", "Transformando todas as categorias yes/no em 1/0.")
-        data = self.out_data.copy()
+        data = self.data_out.copy()
         data.loc[: , "PARENT1"].replace("No", 0, inplace = True)
         data.loc[: , "PARENT1"].replace("Yes", 1, inplace = True)
 
@@ -78,11 +78,11 @@ class DataPipeline(object):
         data.loc[: , "REVOKED"].replace("No", 0, inplace = True)
         data.loc[: , "REVOKED"].replace("Yes", 1, inplace = True)
 
-        self.out_data = data
+        self.data_out = data
         
     def step04_one_hot_encoding(self):
         self.record_procedure("OneHotEncoding", f"Realizando OneHotEncoding, removendo uma categoria para ser a 'base': {self.VARIAVEIS_MULTI_CATEGORICAS}.")
-        data = self.out_data.copy()
+        data = self.data_out.copy()
         categoricas = data.loc[: , self.VARIAVEIS_MULTI_CATEGORICAS]
         encoder = sklearn.preprocessing.OneHotEncoder(
             categories = "auto", 
@@ -99,21 +99,21 @@ class DataPipeline(object):
         df_categoricas.index = categoricas.index
         
         data.drop(self.VARIAVEIS_MULTI_CATEGORICAS, axis = 1, inplace=True)
-        self.out_data = data.join(df_categoricas)
+        self.data_out = data.join(df_categoricas)
 
     
     def step05_normalizando_dados(self):
         self.record_procedure("Normalizando Dados", "Normalizando com sklearn -> scale: {self.VARIAVEIS_NUMERICAS}")
-        data = self.out_data.copy()
+        data = self.data_out.copy()
         reescaladas = sklearn.preprocessing.scale(data.loc[ : , self.VARIAVEIS_NUMERICAS])
         data.loc[ : , self.VARIAVEIS_NUMERICAS] = reescaladas
-        self.out_data = data
+        self.data_out = data
 
     
     def step05b_log_dinheiro(self):
-        data = self.out_data.copy()
+        data = self.data_out.copy()
         data.loc[ : , self.VARIAVEIS_DINHEIRO] = np.log10(data.loc[ : , self.VARIAVEIS_DINHEIRO]+0.001)
-        self.out_data = data
+        self.data_out = data
 
 
     def pre_simples(self):

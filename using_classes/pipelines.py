@@ -1,4 +1,5 @@
 import pandas as pd
+import sklearn.preprocessing
 
 class DataPipeline(object):  
 
@@ -12,7 +13,12 @@ class DataPipeline(object):
     VARIAVEIS_DINHEIRO = ["INCOME","HOME_VAL","BLUEBOOK","OLDCLAIM", "CLM_AMT"]
     VARIAVEIS_NUMERICAS_COM_MISSING =  ["AGE", "YOJ", "INCOME","HOME_VAL", "BLUEBOOK","OLDCLAIM", "CAR_AGE"]
     VARIAVEIS_CATEGORICAS_COM_MISSING = ["OCCUPATION"]
-
+    
+    Y_VARIABLES = ["CLM_FREQ","CLM_AMT","CLAIM_FLAG"]
+    Y_FREQ = "CLM_FREQ"
+    Y_AMT = "CLM_AMT"
+    Y_FLAG = "CLAIM_FLAG"
+        
 
     def __init__(self, datapath):
         self.datapath = datapath
@@ -114,30 +120,35 @@ class DataPipeline(object):
         data = self.data_out.copy()
         data.loc[ : , self.VARIAVEIS_DINHEIRO] = np.log10(data.loc[ : , self.VARIAVEIS_DINHEIRO]+0.001)
         self.data_out = data
+        
 
 
     def pre_simples(self):
-        etapas = list()
-        data_pre = step00_remove_colunas_desnecessarias(data)
-        etapas.append("remove_colunas")
-        data_pre = step01_dinheiro_para_numerico(data_pre)
-        etapas.append("dinheiro_para_numericas")
-        data_pre = step02_remove_missing(data_pre)
-        etapas.append("substitui_missings")
-        data_pre = step03_transforma_flags(data_pre)
-        etapas.append("transforma_flags_para_1_0")
-        data_pre = step04_one_hot_encoding(data_pre)
-        etapas.append("one_hot_encoding")
-        return data_pre
+        self.clean_procedures()
+        self.step00_remove_columns()
+        self.step01_money_to_number()
+        self.step02_remove_missing()
+        self.step03_flags_to_number()
+        self.step04_one_hot_encoding()
+        return self.data_out
+
     
     def pre_normalizado(self):
-        data_pre, etapas = pre_simples(data)    
-        etapas.append("Normalização Com Desvios Padrão")
-        data_pre = step05_normalizando_dados(data_pre)
-        return data_pre
+        self.clean_procedures()
+        self.pre_simples()
+        self.step05_normalizando_dados()
+        return self.data_out
 
     def pre_logDinheiro(self):
-        data_pre, etapas = pre_simples(data)    
-        etapas.append("Log Dinheiro")
-        data_pre = step10_log_dinheiro(data_pre)
-        return data_pre
+        self.clean_procedures()
+        self.pre_simples()
+        self.step05b_log_dinheiro()
+        return self.data_out
+
+    def getXdata(self):
+        return self.data_out.drop(self.Y_VARIABLES, axis = 1)
+    
+    def getYdata(self, target):
+        if target not in self.Y_VARIABLES:
+            raise ValueError(f"{target} is not a valid target.")
+        return self.data_out.loc[ : , target]

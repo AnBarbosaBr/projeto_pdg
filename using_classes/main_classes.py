@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
-import pipelines
+import main_classes
+import pipeline
+import RBF
+
 from collections import defaultdict, namedtuple
 import sklearn.model_selection
 
@@ -16,6 +19,9 @@ Avaliacao = namedtuple("Avaliacao", ["criterio", "treino","teste"])
 SaidaAnalise = namedtuple("SaidaAnalise", ["values_actual", "values_predicted"])
 
 class Resultado(object):
+    TEST = "teste"
+    TRAIN = "treino"
+
     def __init__(self, model, parameter):
         self.model = model
         self.parameter = parameter
@@ -34,6 +40,13 @@ class Resultado(object):
             raise ValueError(f"Tipo deve ser 'teste' ou 'treino'. Fornecido {tipo}")
         self.values_predicted[tipo].append(values) 
     
+class ResultadoGrid(Resultado):
+    def __init__(self, model):
+        super().__init__(model, list())
+        self.current_parameters = dict()
+    
+    
+
 class Resultados(object):
     def __init__(self):
         self.resultados = defaultdict(lambda : [])
@@ -41,14 +54,69 @@ class Resultados(object):
     def addResultado(iteracao, modelo, resultado):
         self.resultados[iteracao].append(resultado)
 
-class Model(object):
+
+
+class AbstractModel(object):
     def __init__(self, nome):
         self.name = nome
         self.parameters = {}
+        self.model = None
         
-    def fit_predict(self, X_train, y_train, X_test):
-        raise NotImplementedError
+    def fit_predict(self, X_train, y_train, X_test) -> Resultado:
+        resultado = Resultado(self, self.parameters)
+        self.fit(X_train, y_train)
+        predictions_train = self.predict(X_train)
+        predictions_test = self.predict(X_test)
+        resultado.addPrevisao(resultado.TEST, predictions_test)
+        resultado.addPrevisao(resultado.TRAIN, predictions_train)
+
+    def fit(self, X_train, y_train):
+        if not self.model:
+            raise TypeError("The model variable of the Abstract Model was not assigned.")
+        self.model.fit(X_train, y_train)
+        return self
     
+    def predict(self, X):
+        if not self.model:
+            raise TypeError("The model variable of the Abstract Model was not assigned.")
+        return self.predict(X)
+
+class RegressionTree(AbstractModel):
+    def __init__(self, max_depth):
+        super().__init__("Arvore")
+        self.parameters["max_depth"] = max_depth
+        self.model = sklearn.tree.DecisionTreeClassifier(max_depth = max_depth)
+
+class BaseGLM(AbstractModel):
+    def __init__(self, family = None, link = None, var_power = None):
+        super().__init__("GLM")
+        self.parameters["Família"] = None
+        self.parameters ["Var Power"] = None
+        self.parameters["Link"] = None
+
+        self.model = None
+        self.trained_model = None
+    
+    def fit(self, X_train, y_train):
+        self.model = sm.GLM(exog = X_train, endog = y_train,
+                            family = self.parameters["Família"])
+        self.trained_model = self.model.fit()
+        return self
+    
+    def predict(self, X):
+        return self.trained_model.predict(X)
+
+
+    
+class RegressionRBFN(AbstractModel):
+    def __init__(self, n_centroides):
+        super().__init__("RBFN")
+        self.parameters["NCentroides"] = n_centroides
+        self.model = RBF.RBFNetwork(number_of_centers = n_centroides, 
+                                   random_state=42)
+
+
+
 
 class AbstractAnalysis(object):
     TREE_ALGORITHM = "Árvore"
